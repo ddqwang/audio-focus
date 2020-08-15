@@ -1,0 +1,228 @@
+<!doctype html>
+<html> 
+<head> 
+    <meta charset="utf-8">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="yes" name="apple-touch-fullscreen">
+    <meta content="telephone=no,email=no" name="format-detection">
+    <meta name="description" content="作品分享" />
+    <script type="text/javascript" src="build/flexible.debug.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/vue.js"></script>
+    <script type="text/javascript" src="js/swiper.min.js"></script>
+    <script type="text/javascript" src="js/swiper.animate1.0.3.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/swiper.min.css">
+    <link rel="stylesheet" type="text/css" href="css/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="css/detail.css">
+    <link rel="stylesheet" href="css/audo.css" />
+    <title>作品分享</title>
+    <style>
+        body{
+            background: #FED18C;
+        }
+        /* .img_slide span{
+            opacity: 0;
+        } */
+    </style>
+</head>
+<body> 
+<div id="app">
+    <div class="swiper_box">
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"  v-for="item in items">
+                    <div class="img_slide ani" swiper-animate-duration="0.3s" swiper-animate-delay="0.1s">
+                        <img :src="item.img" style="width: 100%;">
+                        <!-- <span class="imgmp3" data-mp3url="https://img.meiyuanbang.com/teach/show/bgm/mingyao.mp3">
+                            <img src="images/play.png">
+                        </span> 
+                        <div class="title_box_2"><h3>中国系列-行李</h3></div> -->
+                    </div>
+                    
+                </div>
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+    <div class="stock_audio_box">
+        <div class="progress_wrap">
+            <!-- 音频时长 -->
+            <div class="time_box clearfix">
+                <span class="has_played" id="play_time">00:00</span>
+                <span class="has_ded" id="total_time">01:01</span>
+            </div>
+            <!-- 音频进度条 -->
+            <div class="progress_bar" id="progress_bar_wrap">
+                <div class="bar" id="progress_bar">
+                    <span class="bar_point" id="bar_point"></span>
+                </div>
+                <div class="load_percent" id="load_persent_bar"></div>
+            </div>
+        </div>
+        <!-- 播放器控制按扭 -->
+        <div class="control_btn_wrap">
+            <div class="btn_wrap clearfix">
+                <span class="pre_btn control_btn" id="prev_btn"></span>
+                <span onclick="switchPlay(this)"  class="play_stop_btn stop" id="play_btn"></span>
+                <span class="next_btn control_btn" id="next_btn"></span>
+            </div>
+        </div>
+    </div> 
+</div>
+    <!-- 播放器 -->
+    <audio src="images/1.mp3" id="music_player"></audio>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el:"#app",
+            data:{
+                items:[
+                    {
+                        mp3url:'https://img.meiyuanbang.com/teach/show/bgm/jiji.mp3',
+                        img:'https://img.meiyuanbang.com/teach/video/2019-01-31/9C046EA2FEA87E8E5F9C36B165011A71.png'
+                    },
+                    {
+                        mp3url:'https://img.meiyuanbang.com/teach/show/bgm/mingyao.mp3',
+                        img:'https://img.meiyuanbang.com/teach/video/2019-01-23/43C00D236A5BEAF230F958406E025F5B.png'
+                    },
+                    {
+                        mp3url:'images/1.mp3',
+                        img:'https://img.meiyuanbang.com/teach/video/2019-01-23/1D2A63F0257188A443FB97392CB1A611.png'
+                    }
+                ]
+            }
+        })
+        var swiper = new Swiper('.swiper-container', {
+            onInit: function(swiper){ //Swiper2.x的初始化是onFirstInit
+                swiperAnimateCache(swiper); //隐藏动画元素 
+                swiperAnimate(swiper); //初始化完成开始动画
+            }, 
+            onSlideChangeEnd: function(swiper){ 
+                swiperAnimate(swiper); //每个slide切换结束时也运行当前slide动画
+            },
+            nextButton: '.swiper-button-next',
+            prevButton: '.swiper-button-prev',
+            pagination: '.swiper-pagination',
+            paginationType: 'fraction',
+            spaceBetween: 50,
+            //左右滑动的方法；
+            onSlideNextStart: function(swiper){
+              $('.img_slide').attr("swiper-animate-effect","fadeInRight");
+              var n=swiper.activeIndex;
+                audioEle.src=vm.items[n].mp3url;
+                audioEle.play();
+            },
+            onSlidePrevStart: function(swiper){
+              $('.img_slide').attr("swiper-animate-effect","fadeInLeft");
+              var n=swiper.activeIndex;
+                audioEle.src=vm.items[n].mp3url;
+                audioEle.play();
+            }
+        });
+        /*音频播放器*/
+        var $loadingPercent  = $("#load_persent_bar"),/*进度条*/
+            $progressBar = $("#progress_bar"),/*进度条模块*/
+            $progressBarWrap = $("#progress_bar_wrap"),/*进度条模块ID*/
+            $barPoint = $("#bar_point"),/*进度条拖动的小圆圈*/
+            $playTime = $("#play_time"),/*已听多少时间*/
+            $totalTime = $("#total_time"),/*总时长*/
+            $playBtn = $("#play_btn");/*播放按钮*/
+        
+        var barWrapWidth = $progressBarWrap.width(),
+            barWrapLeft = $progressBarWrap.offset().left;    
+        var flag =false;
+        var audioEle=document.getElementById("music_player");
+
+        /*音频开始时执行方法*/
+        $(function(){
+            audioEle.oncanplay = function () { 
+                $totalTime.text(formatSec(audioEle.duration));  
+            }
+        })
+        /*实时进度条*/
+        audioEle.addEventListener('timeupdate', function(){
+            var timestamp = (audioEle.currentTime).toFixed();
+            if(timestamp > audioEle.duration){
+                timestamp  = audioEle.duration
+            }
+            $playTime.text(formatSec(timestamp));
+            $progressBar.css('width',((barWrapWidth/audioEle.duration)*timestamp).toFixed(2)+'px');
+        })
+        /*视频结束*/
+        audioEle.addEventListener('ended', function(){
+            
+            swiper.slideNext();
+            var n=swiper.activeIndex;
+            audioEle.src=vm.items[n].mp3url;
+            audioEle.play();
+        })
+        function switchPlay(){
+            var n=swiper.activeIndex;
+            audioEle.src=vm.items[n].mp3url;
+            flag = !flag
+            if (flag) {
+                audioEle.play();
+                $playBtn.removeClass('stop');
+                $totalTime.text(formatSec(audioEle.duration))  
+            }else {
+                audioEle.pause();
+                $playBtn.addClass('stop')
+            }
+        }
+        /*进度条拖动*/
+        $barPoint.on('touchmove', function (e) {
+            var left = e.originalEvent.changedTouches[0].clientX - barWrapLeft;
+            $playBtn.removeClass('stop');
+            audioEle.currentTime=(audioEle.duration*(left / barWrapWidth)).toFixed()
+        });
+        // 点击进度条播放
+        $progressBarWrap.on('touchend', function (e){
+            audioEle.play();
+            var left = e.originalEvent.changedTouches[0].clientX - barWrapLeft;
+            $playBtn.removeClass('stop');
+            audioEle.currentTime=(audioEle.duration*(left / barWrapWidth)).toFixed();
+        });
+        
+        /*时间转换*/
+        function formatSec (second) {
+            var _min,
+                _sec;
+
+            _min = parseInt(second / 60);
+            _sec = parseInt(second % 60);
+
+            return (_min >= 10 ? _min : '0' + _min) + ':'
+                + (_sec >= 10 ? _sec : '0' + _sec);
+        }
+
+
+        var swiper = new Swiper('.swiper-container', {
+            onInit: function(swiper){ //Swiper2.x的初始化是onFirstInit
+                swiperAnimateCache(swiper); //隐藏动画元素 
+                swiperAnimate(swiper); //初始化完成开始动画
+            }, 
+            onSlideChangeEnd: function(swiper){ 
+                swiperAnimate(swiper); //每个slide切换结束时也运行当前slide动画
+            },
+            nextButton: '.swiper-button-next',
+            prevButton: '.swiper-button-prev',
+            pagination: '.swiper-pagination',
+            paginationType: 'fraction',
+            spaceBetween: 50,
+            //左右滑动的方法；
+            onSlideNextStart: function(swiper){
+              $('.img_slide').attr("swiper-animate-effect","fadeInRight");
+              var n=swiper.activeIndex;
+                audioEle.src=vm.items[n].mp3url;
+                audioEle.play();
+            },
+            onSlidePrevStart: function(swiper){
+              $('.img_slide').attr("swiper-animate-effect","fadeInLeft");
+              var n=swiper.activeIndex;
+                audioEle.src=vm.items[n].mp3url;
+                audioEle.play();
+            }
+        });
+    </script>
+</body>
+</html>

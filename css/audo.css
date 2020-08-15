@@ -1,0 +1,102 @@
+.clearfix {*zoom: 1;}
+.clearfix:before,.clearfix:after {display: table; content: ""; height:0; clear:both; visibility: hidden;}
+
+.progress_wrap{
+    margin-bottom: 0.5rem;
+    margin-top: .8rem;
+}
+.stock_audio_box{
+    background: #000;
+    width: 9.2rem;
+    margin: 0 auto;
+    height: 3.133333rem;
+}
+.time_box{
+    height: 0.8rem;
+    padding: .2rem .4rem;
+}
+.time_box span{
+    font-size: .373333rem;
+    color: #fff;
+}
+.time_box span.has_played{
+    float: left;
+}
+.time_box span.has_ded{
+    float: right;
+}
+
+.progress_bar{ 
+    position: relative; 
+    width: 8.4rem;  
+    height: 0.16rem; 
+    background-color: #fff; 
+    border-radius: 0.066667rem;
+    margin: 0 auto;
+}
+.progress_bar .bar{ 
+    position: absolute; 
+    z-index: 100; 
+    left: 0; 
+    top: 0; 
+    background-color: #ffc900; 
+    width: 0%;  
+    height: 0.16rem; 
+    border-radius: 0.066667rem;
+}
+.progress_bar .bar_point{
+    position: absolute;
+    right: -0.36rem;
+    top: -0.13rem;
+    width: 0.4rem;
+    height: 0.4rem;
+    background-color: #fff;
+    border-radius: 50%;
+}
+
+.progress_bar .load_percent { 
+    position: absolute; 
+    z-index: 50; 
+    left: 0; 
+    top: 0; 
+    background-color: #e6e6e6; 
+    width: 0%;  
+    height: 0.16rem; 
+    border-radius: 0.066667rem; 
+}
+
+.control_btn_wrap{
+    text-align: center;
+}
+.btn_wrap{    
+    width:4.6rem;
+    margin: 0 auto;
+}
+.btn_wrap span.control_btn{ 
+    width: .72rem; 
+    height: .72rem; 
+    margin-top: 0.2rem; 
+    background: url(../images/prev.png) no-repeat; 
+    background-size: 100%;
+}
+.btn_wrap span.pre_btn{
+    float: left; 
+}
+.btn_wrap span.next_btn{
+    float: right;
+    background: url(../images/next.png) no-repeat; 
+    background-size: 100%;
+}
+.btn_wrap span.play_stop_btn{ 
+    display: inline-block;
+    width: 1.2rem; 
+    height: 1.2rem; 
+    background: url(../images/stop_icon.png) no-repeat; 
+    background-size: 100%;
+    margin: 0 auto;
+}
+.btn_wrap span.play_stop_btn.stop{  
+    background: url(../images/play_icon.png) no-repeat; 
+    background-size:100%;
+}
+
