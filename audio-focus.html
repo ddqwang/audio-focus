@@ -156,9 +156,10 @@
             audioEle.src=vm.items[n].mp3url;
             audioEle.play();
         })
+        var n=swiper.activeIndex;
+        audioEle.src=vm.items[n].mp3url;
         function switchPlay(){
-            var n=swiper.activeIndex;
-            audioEle.src=vm.items[n].mp3url;
+            
             flag = !flag
             if (flag) {
                 audioEle.play();
